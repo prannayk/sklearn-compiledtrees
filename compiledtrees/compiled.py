@@ -76,11 +76,11 @@ class CompiledRegressionPredictor(RegressorMixin):
             files = cg.code_gen_tree(tree=clf.tree_)
 
         if isinstance(clf, GradientBoostingRegressor):
-            n_features = clf.n_features
+            n_features = clf.n_features_
 
             # hack to get the initial (prior) on the decision tree.
-            initial_value = clf._init_decision_function(
-                np.zeros(shape=(1, n_features))).item((0, 0))
+            initial_value = np.sum(clf.init_.predict(
+                np.zeros(shape=(1, n_features))))
 
             files = cg.code_gen_ensemble(
                 trees=[e.tree_ for e in clf.estimators_.flat],
